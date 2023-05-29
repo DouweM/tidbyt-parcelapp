@@ -24,7 +24,11 @@ def image_data(url):
 def main(config):
     TOKEN = config.get("token")
     if not TOKEN:
-        fail("No token provided")
+        return render.Root(
+            child=render.Box(
+                child=render.WrappedText("ParcelApp Web Token not configured")
+            )
+        )
 
     response = http.get("https://data.parcelapp.net/data.php?caller=yes&compression=yes&version=4", headers={"Cookie": "account_token=%s" % TOKEN})
 
@@ -44,10 +48,10 @@ def main(config):
 
     last_parcel = active_parcels[0]
     number = last_parcel[0]
-    name = last_parcel[1]
+    name = last_parcel[1] # TODO: Decode HTML entities like &amp;
     provider = last_parcel[2]
     last_status = last_parcel[4][0]
-    status_text = last_status[0]
+    status_text = last_status[0] # TODO: Decode HTML entities like &amp;
     status_date = last_status[1]
 
     return render.Root(
