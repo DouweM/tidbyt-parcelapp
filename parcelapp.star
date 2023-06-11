@@ -4,7 +4,7 @@ load("http.star", "http")
 load("cache.star", "cache")
 load("hash.star", "hash")
 
-LOGO_URL = "https://i.postimg.cc/BvvwMqRr/pixil-frame-0-2.png?dl=1"
+API_URL = "https://data.parcelapp.net/data.php?caller=yes&compression=yes&version=4"
 
 def image_data(url):
     cached = cache.get(url)
@@ -22,6 +22,8 @@ def image_data(url):
     return data
 
 def main(config):
+    ASSET_URL = config.get("$asset_url")
+
     TOKEN = config.get("token")
     if not TOKEN:
         return render.Root(
@@ -30,7 +32,7 @@ def main(config):
             )
         )
 
-    response = http.get("https://data.parcelapp.net/data.php?caller=yes&compression=yes&version=4", headers={"Cookie": "account_token=%s" % TOKEN})
+    response = http.get(API_URL, headers={"Cookie": "account_token=%s" % TOKEN})
 
     if response.status_code != 200:
         fail("No parcels found", response)
@@ -40,7 +42,7 @@ def main(config):
 
     logo = render.Padding(
       pad=(0,0,2,0),
-      child=render.Image(src=image_data(LOGO_URL), width=13, height=13)
+      child=render.Image(src=image_data(ASSET_URL + 'icon.png'), width=13, height=13)
     )
 
     if not active_parcels:
@@ -72,7 +74,10 @@ def main(config):
               width=64,
               child=render.Text(status_text),
             ),
-            render.Text(status_date, font="CG-pixel-3x5-mono")
+            render.Marquee(
+              width=64,
+              child=render.Text(status_date, font="CG-pixel-3x5-mono")
+            )
           ]
         )
     )
