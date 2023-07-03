@@ -1,29 +1,12 @@
 load("schema.star", "schema")
 load("render.star", "render")
 load("http.star", "http")
-load("cache.star", "cache")
-load("hash.star", "hash")
+load("pixlib/const.star", "const")
+load("pixlib/file.star", "file")
 
 API_URL = "https://data.parcelapp.net/data.php?caller=yes&compression=yes&version=4"
 
-def image_data(url):
-    cached = cache.get(url)
-    if cached:
-        return cached
-
-    response = http.get(url)
-
-    if response.status_code != 200:
-        fail("Image not found", url)
-
-    data = response.body()
-    cache.set(url, data)
-
-    return data
-
 def main(config):
-    ASSET_URL = config.get("$asset_url")
-
     TOKEN = config.get("token")
     if not TOKEN:
         return render.Root(
@@ -42,7 +25,7 @@ def main(config):
 
     logo = render.Padding(
       pad=(0,0,2,0),
-      child=render.Image(src=image_data(ASSET_URL + 'icon.png'), width=13, height=13)
+      child=render.Image(src=file.read(config, 'icon.png'), width=13, height=13)
     )
 
     if not active_parcels:
@@ -65,17 +48,17 @@ def main(config):
               children=[
                 logo,
                 render.Marquee(
-                  width=64-13-2,
+                  width=const.WIDTH-13-2,
                   child=render.Text(name, font="6x13")
                 ),
               ]
             ),
             render.Marquee(
-              width=64,
+              width=const.WIDTH,
               child=render.Text(status_text),
             ),
             render.Marquee(
-              width=64,
+              width=const.WIDTH,
               child=render.Text(status_date, font="CG-pixel-3x5-mono")
             )
           ]
