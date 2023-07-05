@@ -3,6 +3,7 @@ load("render.star", "render")
 load("http.star", "http")
 load("pixlib/const.star", "const")
 load("pixlib/file.star", "file")
+load("pixlib/html.star", "html")
 
 API_URL = "https://data.parcelapp.net/data.php?caller=yes&compression=yes&version=4"
 
@@ -25,7 +26,7 @@ def main(config):
 
     logo = render.Padding(
       pad=(0,0,2,0),
-      child=render.Image(src=file.read(config, 'icon.png'), width=13, height=13)
+      child=render.Image(src=file.read('icon.png'), width=13, height=13)
     )
 
     if not active_parcels:
@@ -33,10 +34,10 @@ def main(config):
 
     last_parcel = active_parcels[0]
     number = last_parcel[0]
-    name = last_parcel[1] # TODO: Decode HTML entities like &amp;
+    name = html.unescape(last_parcel[1])
     provider = last_parcel[2]
     last_status = last_parcel[4][0]
-    status_text = last_status[0] # TODO: Decode HTML entities like &amp;
+    status_text = html.unescape(last_status[0])
     status_date = last_status[1]
 
     return render.Root(
