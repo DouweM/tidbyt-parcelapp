@@ -38,7 +38,7 @@ def main(config):
     provider = last_parcel[2]
     last_status = last_parcel[4][0]
     status_text = html.unescape(last_status[0])
-    status_date = last_status[1]
+    status_date = html.unescape(last_status[1])
 
     return render.Root(
         child=render.Column(
