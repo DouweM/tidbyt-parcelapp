@@ -1,0 +1,16 @@
+jobs:
+- name: parcelapp
+  tasks:
+  - tap-pixlet--parcelapp target-tidbyt
+- name: parcelapp--webp
+  tasks:
+  - tap-pixlet--parcelapp target-webp
+
+plugins:
+  extractors:
+  - name: tap-pixlet--parcelapp
+    inherit_from: tap-pixlet
+    config:
+      path: apps/parcelapp
+      app_config:
+        token: $PARCELAPP_TOKEN
