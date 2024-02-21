@@ -21,7 +21,15 @@ def main(config):
     response = http.get(API_URL, headers={"Cookie": "account_token=%s" % TOKEN})
 
     if response.status_code != 200:
-        fail("No parcels found", response)
+        fail("No parcels found: ", response)
+
+    response_body = response.body()
+    if not response_body.startswith("["):
+      error_message = response_body.strip()
+      if error_message == 'VERIFICATIONFAILURE':
+        fail("Invalid ParcelApp Web Token")
+      else:
+        fail("Invalid response: ", error_message)
 
     parcels = response.json()[0]
     active_parcels = sorted(
